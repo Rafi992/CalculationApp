@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Electrolize&family=Poppins:wght@400;600;800&display=swap");
+@import "./styles/header.scss";
+@import "./styles/neumorphism.scss";
+@import "./styles/home.scss";
+@import "./styles/calculator.scss";
+
+:root {
+  font-family: "Poppins", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* color-scheme: light dark; */
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+html,
+body {
+  background-color: #f1f3f6;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+h1 {
+  font-family: "Electrolize", sans-serif;
+}
+
+#theme-wrapper,
+#root {
+  width: 100%;
+  height: 100%;
+  background-color: #f1f3f6;
+}
+
+#theme-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layout {
+  min-height: 70%;
+  max-width: 1260px;
+  padding: 50px;
+  z-index: 1000;
+}
+
+// main {
+//   min-height: 450px;
+//   z-index: 10;
+// }
+
+a {
+  font-weight: 500;
+  color: #111;
+  text-decoration: none;
+  font-family: "Electrolize", sans-serif;
+}
+a:hover {
+  color: #ca8500;
+}
+
+.circle-left {
+  position: absolute;
+  width: 30vw;
+  height: 30vw;
+  border-radius: 50%;
+  background-color: #ca8500;
+  bottom: -12.5vw;
+  left: -12.5vw;
+}
+.circle-right {
+  position: absolute;
+  width: 30vw;
+  height: 30vw;
+  border-radius: 50%;
+  background-color: #ca8500;
+  top: -12.5vw;
+  right: -12.5vw;
+}

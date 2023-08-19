@@ -1,0 +1,24 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.neu {
+  background: linear-gradient(145deg, #292d34, #1d1f24);
+  border-radius: 20px;
+  box-shadow: 9.91px 9.91px 15px #202328, -9.91px -9.91px 15px #262930;
+}
+
+.neu-btn {
+  background: #161f2f;
+  border-radius: 25px;
+  box-shadow: 11.11px 11.11px 24px #131b29, -11.11px -11.11px 24px #192335;
+}
+
+.neu-btn:active {
+  background: linear-gradient(145deg, #1e2126, #282b32);
+  border-radius: 20px;
+  box-shadow: inset 9.91px 9.91px 15px #202328,
+    inset -9.91px -9.91px 15px #262930;
+}
