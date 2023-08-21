@@ -33,9 +33,18 @@ const Calculator: FC = () => {
   async function saveCurrentCalculationHistory() {
     if (user && calculationHistory.length > 0) {
       const ref = doc(db, "users", user.id);
+      const communicationRef = doc(db, "communication", "data");
+
+      const communicationData = calculationHistory.map((obj) => {
+        return { ...obj, userName: user.name.split(" ")[0] };
+      });
+
       try {
         await updateDoc(ref, {
           calculationHistory: arrayUnion(...calculationHistory),
+        });
+        await updateDoc(communicationRef, {
+          calculationHistory: arrayUnion(...communicationData),
         });
         toast.success("Historia obliczeń zaktualizowana", {
           position: "top-right",
@@ -73,6 +82,19 @@ const Calculator: FC = () => {
     return;
   }
 
+  function calculate() {
+    const result = calculateExpression(
+      `${previousInput}${activeSign}${currentInput}`
+    );
+    calculationHistory.push({
+      id: Date.now().toString(),
+      calculation: `${previousInput} ${activeSign} ${currentInput}`,
+      result: result.toString(),
+      date: currentDate,
+    });
+    return result;
+  }
+
   function handleOnClick(value: string, action: string) {
     if (action === "number") {
       if (displayedNumber === "0" || currentInput === "0") {
@@ -82,96 +104,54 @@ const Calculator: FC = () => {
         setCurrentInput(currentInput + value);
         setDisplayedNumber(currentInput + value);
       }
-    } else if (action !== "number") {
+    } else if (action === "reverse") {
+      return;
+    } else if (action !== "number" && action !== "reverse") {
       setActiveSign(value);
 
       switch (action) {
         case "add":
-          if (!previousInput) {
-            setPreviousInput(currentInput);
-            setCurrentInput("");
-          } else if (previousInput && currentInput) {
-            const result = Number(previousInput) + Number(currentInput);
-            setDisplayedNumber(result.toString());
-            setCurrentInput("");
-            setPreviousInput(result.toString());
-            calculationHistory.push({
-              id: Math.random().toString(),
-              calculation: `${previousInput} ${activeSign} ${currentInput}`,
-              result: result.toString(),
-              date: currentDate,
-            });
-          } else {
-          }
-          break;
         case "substract":
-          if (!previousInput) {
-            setPreviousInput(currentInput);
-            setCurrentInput("");
-          } else if (previousInput && currentInput) {
-            const result = Number(previousInput) - Number(currentInput);
-            setDisplayedNumber(result.toString());
-            setCurrentInput("");
-            setPreviousInput(result.toString());
-            calculationHistory.push({
-              id: Math.random().toString(),
-              calculation: `${previousInput} ${activeSign} ${currentInput}`,
-              result: result.toString(),
-              date: currentDate,
-            });
-          } else {
-          }
-          break;
         case "multiple":
-          if (!previousInput) {
-            setPreviousInput(currentInput);
-            setCurrentInput("");
-          } else if (previousInput && currentInput) {
-            const result = Number(previousInput) * Number(currentInput);
-            setDisplayedNumber(result.toString());
-            setCurrentInput("");
-            setPreviousInput(result.toString());
-            calculationHistory.push({
-              id: Math.random().toString(),
-              calculation: `${previousInput} ${activeSign} ${currentInput}`,
-              result: result.toString(),
-              date: currentDate,
-            });
-          } else {
-          }
-          break;
         case "divide":
-          if (!previousInput) {
-            setPreviousInput(currentInput);
-            setCurrentInput("");
-          } else if (previousInput && currentInput) {
-            const result = Number(previousInput) / Number(currentInput);
-            setDisplayedNumber(result.toString());
-            setCurrentInput("");
-            setPreviousInput(result.toString());
-            calculationHistory.push({
-              id: Math.random().toString(),
-              calculation: `${previousInput} ${activeSign} ${currentInput}`,
-              result: result.toString(),
-              date: currentDate,
-            });
+          if (displayedNumber !== "") {
+            setPreviousInput(displayedNumber);
+            setDisplayedNumber("");
+            if (!currentInput && !previousInput) {
+              return;
+            } else if (currentInput && !previousInput) {
+              setPreviousInput(currentInput);
+              setCurrentInput("");
+            } else if (currentInput && previousInput) {
+              const result = calculate();
+              setDisplayedNumber(result);
+              setCurrentInput("");
+              setPreviousInput("");
+            }
           } else {
+            if (!currentInput && !previousInput) {
+              return;
+            } else if (currentInput && !previousInput) {
+              setPreviousInput(currentInput);
+              setCurrentInput("");
+            } else if (currentInput && previousInput) {
+              const result = calculate();
+              setDisplayedNumber(result);
+              setCurrentInput("");
+              setPreviousInput("");
+            }
           }
           break;
-        case "equal":
-          const result = calculateExpression(
-            `${previousInput}${activeSign}${currentInput}`
-          );
-          calculationHistory.push({
-            id: Math.random().toString(),
-            calculation: `${previousInput} ${activeSign} ${currentInput}`,
-            result: result.toString(),
-            date: currentDate,
-          });
 
-          setDisplayedNumber(result);
-          setCurrentInput("");
-          setPreviousInput("");
+        case "equal":
+          if (!currentInput && !previousInput) {
+            return;
+          } else if (currentInput && previousInput) {
+            const result = calculate();
+            setDisplayedNumber(result);
+            setCurrentInput("");
+            setPreviousInput("");
+          }
           break;
         case "back":
           if (currentInput.length > 0) {
@@ -179,7 +159,6 @@ const Calculator: FC = () => {
             setCurrentInput(newInput);
             setDisplayedNumber(newInput);
           }
-
           break;
         case "clear":
           setCurrentInput("");
@@ -191,11 +170,11 @@ const Calculator: FC = () => {
   }
 
   return (
-    <section className='calculatorPage w-[100%] mx-auto '>
+    <section className='calculatorPage w-[100%] mx-auto'>
       <ToastContainer />
       <div className='calculator w-[100%] mx-auto py-4  relative '>
         {historyModal && <History history={calculationHistory} />}
-        <div className='calculator__display h-[100px] sm:w-[350px] rounded-lg mb-6 p-2'>
+        <div className='calculator__display mx-auto h-[100px] sm:w-[350px] rounded-lg mb-6 p-2'>
           <div className='w-full h-[35px] text-slate-700 text-right font-bold text-xl'>
             {displayedNumber}
           </div>
@@ -203,8 +182,8 @@ const Calculator: FC = () => {
             {currentInput}
           </div>
         </div>
-        <div className='calculator__buttons flex justify-between items-center  mb-10 sm:w-[350px]'>
-          <div className='w-[60%] calculator__buttons--left grid grid-cols-3 place-content-center gap-4'>
+        <div className='calculator__buttons mx-auto flex justify-between items-center  mb-10 sm:w-[350px]'>
+          <div className='w-[60%] calculator__buttons--left grid grid-cols-3 place-content-center gap-4 pr-2'>
             {mainButtons.map((btn) => (
               <Btn
                 onClick={() => handleOnClick(btn.value, btn.action)}
@@ -214,7 +193,7 @@ const Calculator: FC = () => {
             ))}
           </div>
           <div className=' w-[40%] calculator__buttons--right'>
-            <div className=' grid grid-cols-2 grid-rows-3 place-content-center gap-4'>
+            <div className=' grid grid-cols-2 grid-rows-3 place-content-center gap-4 pl-2'>
               {actionButtons.map((btn) => (
                 <Btn
                   onClick={() => handleOnClick(btn.value, btn.action)}
@@ -233,7 +212,7 @@ const Calculator: FC = () => {
             </div>
           </div>
         </div>
-        <div className='m-0 calculator__actions w-[350px] flex items-center justify-around [&>*]:w-[150px] [&>*]:m-0'>
+        <div className='m-0 calculator__actions flex items-center justify-around [&>*]:w-[130px] text-sm [&>nth-child(1)]:mr-3'>
           <Btn
             onClick={saveCurrentCalculationHistory}
             color='23777b'

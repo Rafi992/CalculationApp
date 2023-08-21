@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "calculation-app-59d6a"
-  }
+    "default": "calculation-app-2b60a",
+    "/": "calculation-app-2b60a"
+  },
+  "targets": {},
+  "etags": {}
 }

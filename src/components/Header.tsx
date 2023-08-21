@@ -17,9 +17,9 @@ const Header = () => {
   const open = () => setModalOpen(true);
   const close = () => setModalOpen(false);
 
-  function logout() {
+  async function logout() {
+    await signOut(auth);
     close();
-    signOut(auth);
     navigate("/");
   }
 
@@ -65,7 +65,7 @@ const Header = () => {
       <div className='w-full h-full flex justify-between items-center'>
         <div className='h-full'>
           <h1
-            className='logo text-2xl'
+            className='logo text-2xl font-secondary'
             style={darkMode ? { color: "#fff" } : {}}
           >
             Calculation App
@@ -99,12 +99,12 @@ const Header = () => {
             style={({ isActive }) => ({
               color: isActive ? "#23777b" : "#fff",
               boxShadow: isActive
-                ? "inset 12px 12px 24px #1b1e22, inset -12px -12px 24px #25282e"
-                : "12px 12px 24px #1b1e22, -12px -12px 24px #25282e",
+                ? "inset 12px 12px 24px #111217, inset -12px -12px 24px #17181f"
+                : "12px 12px 24px #111217, -12px -12px 24px #17181f",
             })}
             className={`${
               darkMode ? "neu-small--dark" : "neu-small--white"
-            } neu__btn neu-small--white p-2 mr-4 rounded-md`}
+            } neu__btn  p-2 mr-4 rounded-md font-secondary`}
             to='/dashboard'
           >
             Strona Główna
@@ -113,12 +113,12 @@ const Header = () => {
             style={({ isActive }) => ({
               color: isActive ? "#23777b" : "#fff",
               boxShadow: isActive
-                ? "inset 12px 12px 24px #1b1e22, inset -12px -12px 24px #25282e"
-                : "12px 12px 24px #1b1e22, -12px -12px 24px #25282e",
+                ? "inset 12px 12px 24px #111217, inset -12px -12px 24px #17181f"
+                : "12px 12px 24px #111217, -12px -12px 24px #17181f",
             })}
             className={`${
               darkMode ? "neu-small--dark" : "neu-small--white"
-            } neu__btn neu-small--white p-2 mr-4 rounded-md`}
+            } neu__btn neu-small--white p-2 mr-4 rounded-md font-secondary`}
             to='/calculator'
           >
             Kalkulator

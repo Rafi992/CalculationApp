@@ -1,9 +1,17 @@
+function hasDecimalPlaces(number: number) {
+  return number.toString().includes(".");
+}
+
 export const calculateExpression = (expression: string) => {
   const operators = {
-    "+": (a: number, b: number) => a + b,
-    "-": (a: number, b: number) => a - b,
-    "*": (a: number, b: number) => a * b,
-    "/": (a: number, b: number) => a / b,
+    "+": (a: number, b: number) =>
+      hasDecimalPlaces(a + b) ? (a + b).toFixed(1) : a + b,
+    "-": (a: number, b: number) =>
+      hasDecimalPlaces(a - b) ? (a - b).toFixed(1) : a - b,
+    "*": (a: number, b: number) =>
+      hasDecimalPlaces(a * b) ? (a * b).toFixed(1) : a * b,
+    "/": (a: number, b: number) =>
+      hasDecimalPlaces(a / b) ? (a / b).toFixed(1) : a / b,
   };
 
   const stack = [];

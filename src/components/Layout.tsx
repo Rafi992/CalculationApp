@@ -1,4 +1,4 @@
-import { ReactNode, FC } from "react";
+import { ReactNode, FC, useEffect, useState } from "react";
 import Header from "./Header";
 import { useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -12,10 +12,27 @@ interface LayoutProps {
 const Layout: FC<LayoutProps> = ({ children }: LayoutProps) => {
   const { pathname } = useLocation();
   const { darkMode } = useThemeContext();
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    // Funkcja do obsługi zmiany szerokości ekranu
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    // Dodanie nasłuchiwania na zmiany szerokości ekranu
+    window.addEventListener("resize", handleResize);
+
+    // Usunięcie nasłuchiwania przy oczyszczaniu komponentu
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const isNotAuthPage = pathname !== "/";
   const isNeumorphism = pathname === "/dashboard" ? "neu-big--white" : "";
   const isCalculator = pathname === "/calculator";
+  const isDashboard = pathname === "/dashboard";
 
   return (
     <AuthProvider>
@@ -24,15 +41,25 @@ const Layout: FC<LayoutProps> = ({ children }: LayoutProps) => {
           id='theme-wrapper'
           style={
             darkMode
-              ? { backgroundColor: "#202328" }
+              ? { backgroundColor: "#14151b" }
               : { backgroundColor: "#f1f3f6" }
           }
         >
           <div
-            style={isCalculator || !isNotAuthPage ? { width: "450px" } : {}}
+            style={
+              (isCalculator || !isNotAuthPage) && screenWidth < 450
+                ? { width: "375px" }
+                : isDashboard && screenWidth < 450
+                ? { width: "90%" }
+                : isDashboard && screenWidth > 450
+                ? { width: "70%" }
+                : {}
+            }
             className={`neu-big--white ${
               darkMode ? "neu-big--dark" : "neu-big--white"
-            } layout h-[550px] sm:h-[400px]  sm:w-[450px] md:w-[550px] lg:w-[70%] md:h-[600px] `}
+            } ${
+              isCalculator || !isNotAuthPage ? "md:w-[450px]" : "md:w-[70%]"
+            } layout mx-auto sm:p-5 p-10`}
           >
             <div
               className='circle-left z-[-1]'
@@ -62,7 +89,7 @@ const Layout: FC<LayoutProps> = ({ children }: LayoutProps) => {
             <motion.main
               initial={{ opacity: 0 }}
               animate={{
-                transition: { delay: 0.4, duration: 0.4, ease: "linear" },
+                transition: { delay: 0.4, duration: 0.4, ease: "easeIn" },
                 opacity: 1,
               }}
               exit={{ opacity: 0, y: 50 }}
@@ -72,7 +99,9 @@ const Layout: FC<LayoutProps> = ({ children }: LayoutProps) => {
                   : !darkMode && isNeumorphism
                   ? "neu-small--white"
                   : ""
-              } z-10 sm:w-[400px] md:w-[100%] h-[500px]`}
+              } ${
+                isDashboard ? "sm:w-[350px] md:w-full" : ""
+              } z-10   mx-auto min-h-[500px] md:h-[80%]`}
             >
               {children}
             </motion.main>

@@ -60,7 +60,7 @@ export const mainButtons = [
   {
     id: 10,
     value: ".",
-    action: "sign",
+    action: "number",
   },
   {
     id: 11,

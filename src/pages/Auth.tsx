@@ -40,7 +40,7 @@ const Auth = () => {
     }
   }
   return (
-    <section className='authPage h-[100%] w-full grid place-content-center'>
+    <section className='authPage h-[500px] w-full flex justify-center items-center'>
       <div className='authPage__wrapper w-full'>
         <h3
           className='text-center text-xl font-semibold mb-[50px] w-[200px] mx-auto'

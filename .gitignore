@@ -12,6 +12,9 @@ firebase/
 dist
 dist-ssr
 *.local
+firebase.json
+firebase.indexes.json
+firestore.rule
 
 # Editor directories and files
 .vscode/*

@@ -1,54 +1,31 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-interface Calculation {
-  id: string;
-  calculation: string;
-  result: string;
-  date: string;
-}
 
 admin.initializeApp();
 
-const db = admin.firestore();
+export const updateCommunicationData = functions.https.onRequest(
+  async (request, response) => {
+    const db = admin.firestore();
 
-export const addCalculationToCommunication = functions.firestore
-  .document("users/{documentId}")
-  .onWrite(async (change, context) => {
-    const userId = context.params.documentId;
+    const userSnapshot = await db
+      .collection("users")
+      .doc(request.body.userId)
+      .get();
+    const user = userSnapshot.data();
 
-    const newValue = change.after.data();
-    const previousValue = change.before.data();
+    const communicationRef = db.collection("communication").doc("data");
 
-    if (!newValue || !previousValue) {
-      return null;
-    }
+    const calculationHistory = request.body.calculationHistory;
+    const communicationData = calculationHistory.map((obj: any) => {
+      return { ...obj, userName: user?.name.split(" ")[0] };
+    });
 
-    const newCalculations = newValue.calculationHistory;
-    const previousCalculations = previousValue.calculationHistory;
-    // Find the new calculations added to the calculationHistory array
-    const addedCalculations = newCalculations.filter(
-      (calculation: Calculation) =>
-        !previousCalculations.some(
-          (prevCalc: Calculation) =>
-            prevCalc.calculation === calculation.calculation
-        )
-    );
+    await communicationRef.update({
+      calculationHistory: admin.firestore.FieldValue.arrayUnion(
+        ...communicationData
+      ),
+    });
 
-    if (addedCalculations.length === 0) {
-      return null;
-    }
-
-    // Add the new calculations to the communication collection
-    const communicationRef = db.collection("communication").doc(userId);
-    await communicationRef.set(
-      {
-        userId,
-        calculations: admin.firestore.FieldValue.arrayUnion(
-          ...addedCalculations
-        ),
-      },
-      { merge: true }
-    );
-
-    return null;
-  });
+    response.send("Communication data updated successfully!");
+  }
+);

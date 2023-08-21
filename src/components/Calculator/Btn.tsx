@@ -26,7 +26,7 @@ const Btn: FC<PropsType> = ({
       className={`${
         darkMode ? "neu-small--dark" : "neu-small--white"
       } w-10 h-10 neu__btn  flex justify-center items-center  cursor-pointer rounded-md  font-semibold mx-auto mb-2`}
-      style={full ? { width: "100%" } : {}}
+      style={full ? { width: "100px" } : {}}
     >
       {icon ? (
         content === "<" ? (
