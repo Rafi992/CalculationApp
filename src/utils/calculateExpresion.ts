@@ -21,7 +21,7 @@ export const calculateExpression = (expression: string) => {
   for (let i = 0; i < expression.length; i++) {
     const char = expression[i];
 
-    if (char >= "0" && char <= "9") {
+    if ((char >= "0" && char <= "9") || char === ".") {
       currentNumber += char;
     } else if (char === "-" && (i === 0 || expression[i - 1] in operators)) {
       currentNumber += char;
@@ -56,5 +56,4 @@ export const calculateExpression = (expression: string) => {
   }
 
   return stack[0].toString();
-  // @ts-ignore
 };
