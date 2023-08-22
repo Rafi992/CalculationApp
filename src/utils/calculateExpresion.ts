@@ -14,12 +14,16 @@ export const calculateExpression = (expression: string) => {
       hasDecimalPlaces(a / b) ? (a / b).toFixed(1) : a / b,
   };
 
-  const stack = [];
+  const stack: number[] = [];
   let currentNumber = "";
-  let currentOperator = null;
+  let currentOperator: string | null = null;
 
-  for (const char of expression) {
+  for (let i = 0; i < expression.length; i++) {
+    const char = expression[i];
+
     if (char >= "0" && char <= "9") {
+      currentNumber += char;
+    } else if (char === "-" && (i === 0 || expression[i - 1] in operators)) {
       currentNumber += char;
     } else if (char in operators) {
       if (currentNumber !== "") {
@@ -28,9 +32,9 @@ export const calculateExpression = (expression: string) => {
       }
 
       if (currentOperator !== null) {
-        const b: any = stack.pop();
-        const a: any = stack.pop();
-        //@ts-ignore
+        const b = stack.pop()!;
+        const a = stack.pop()!;
+        // @ts-ignore
         const result = operators[currentOperator](a, b);
         stack.push(result);
       }
@@ -44,12 +48,13 @@ export const calculateExpression = (expression: string) => {
   }
 
   if (currentOperator !== null) {
-    const b = stack.pop();
-    const a = stack.pop();
-    //@ts-ignore
+    const b = stack.pop()!;
+    const a = stack.pop()!;
+    // @ts-ignore
     const result = operators[currentOperator](a, b);
     stack.push(result);
   }
 
-  return stack[0];
+  return stack[0].toString();
+  // @ts-ignore
 };
